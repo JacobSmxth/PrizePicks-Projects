@@ -1,6 +1,4 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import {useEffect, useState} from "react";
 import "./App.css";
 
 function App() {
@@ -19,6 +17,25 @@ function App() {
   };
 
   type JokeResponse = SingleJoke | TwoPartJoke;
+
+
+  function TimeGetter() {
+    const [time, setTime] = useState(new Date());
+
+    useEffect(() =>  {
+      const interval = setInterval(() => {
+        setTime(new Date());
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <>
+          <h1>{time.toLocaleTimeString()}</h1>
+        </>
+    )
+  }
 
   function JokeFetcher() {
     const [joke, setJoke] = useState<JokeResponse | null>(null);
@@ -47,11 +64,14 @@ function App() {
       }
     }
 
+
     return (
       <div>
         <button onClick={fetchJoke} disabled={loading}>
           {loading ? "Loading.." : "Get joke"}
         </button>
+
+        {error && <p>{error}</p>}
 
         {joke && (
           <p>
@@ -71,6 +91,7 @@ function App() {
 
   return (
     <>
+      <TimeGetter />
       <h1>
         This is my simple react app to become familiar with simple things in it
       </h1>
