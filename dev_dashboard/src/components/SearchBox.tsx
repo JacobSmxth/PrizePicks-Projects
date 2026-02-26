@@ -12,13 +12,14 @@ type GitHubUser = {
 function SearchBox() {
     const [searchText, setSearchText] = useState("");
     const [user, setUser] = useState<GitHubUser | null>(null);
-    const [results, setResults] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!searchText.trim()) {
-            setResults([]); // Clear my current results
+            setUser(null);
+            setError(null);
+            setLoading(false);
             return;
         }
 
@@ -35,7 +36,7 @@ function SearchBox() {
 
                 const data : GitHubUser = await response.json();
                 setUser(data);
-                setError("");
+                setError(null);
             } catch(err) {
                 console.error(err);
             } finally {
