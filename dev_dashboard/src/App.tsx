@@ -14,7 +14,7 @@ function App() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
 
   async function fetchProfile() {
@@ -28,7 +28,7 @@ function App() {
           const data: Profile = await response.json();
           setProfile(data);
       } catch (err) {
-          setError(err)
+          setError("Error occured: " + err);
           console.error(err);
       } finally {
           setLoading(false);
@@ -39,8 +39,6 @@ function App() {
 
   return (
     <>
-     <button onClick={() => setState(state + 1)}>{state}</button>
-        <hr />
         <button onClick={fetchProfile}>{loading ? "Loading.." : "Get Linus Torvalds Profile"}</button>
 
         {error && <p>{error}</p>}
