@@ -1,33 +1,57 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [state, setState] = useState(0);
+  const url = "https://api.github.com/users/torvalds";
+
+  type Profile = {
+      name: string | null;
+      company: string | null;
+      followers: number;
+      following: number;
+  }
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+
+  async function fetchProfile() {
+
+      try {
+          setLoading(true);
+          const response = await fetch(url);
+          if (!response.ok) {
+              throw new Error();
+          }
+          const data: Profile = await response.json();
+          setProfile(data);
+      } catch (err) {
+          setError(err)
+          console.error(err);
+      } finally {
+          setLoading(false);
+      }
+
+  }
+
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+     <button onClick={() => setState(state + 1)}>{state}</button>
+        <hr />
+        <button onClick={fetchProfile}>{loading ? "Loading.." : "Get Linus Torvalds Profile"}</button>
+
+        {error && <p>{error}</p>}
+
+        {profile && (<div>
+                <h2>{profile.name}</h2>
+                <p>Company: {profile.company ?? "N/A"}</p>
+                <p>Followers: {profile?.followers}</p>
+                <p>Following: {profile?.following}</p>
+            </div>
+        )}
     </>
   )
 }
