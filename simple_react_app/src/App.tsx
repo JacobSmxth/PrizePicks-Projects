@@ -2,9 +2,6 @@ import {useEffect, useState} from "react";
 import "./App.css";
 
 function App() {
-  // setting two variables, count is the value, setCount is the "function" to setCount. We are setting it equal to useState(x). the x is the starting value of count
-  const [count, setCount] = useState(9);
-
   type SingleJoke = {
     type: "single";
     joke: string;
@@ -38,6 +35,7 @@ function App() {
   }
 
   function JokeFetcher() {
+    const [count, setCount] = useState(0);
     const [joke, setJoke] = useState<JokeResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -54,11 +52,12 @@ function App() {
         if (!response.ok) {
           throw new Error("HTTP Error: " + response.status);
         }
+        setCount(count + 1);
 
         const data: JokeResponse = await response.json();
         setJoke(data);
       } catch (err) {
-        setError("Error Occured");
+        setError("Error fetching joke" + err);
       } finally {
         setLoading(false);
       }
@@ -67,6 +66,7 @@ function App() {
 
     return (
       <div>
+        <h2>Jokes Given: {count}</h2>
         <button onClick={fetchJoke} disabled={loading}>
           {loading ? "Loading.." : "Get joke"}
         </button>
@@ -92,11 +92,7 @@ function App() {
   return (
     <>
       <TimeGetter />
-      <h1>
-        This is my simple react app to become familiar with simple things in it
-      </h1>
-      {/* this is something I repurposed from the template of the react + vite template */}
-      <button onClick={() => setCount(count + 1)}>{count}</button>
+      <h1>This is my joke fetching app now</h1>
 
       <JokeFetcher />
     </>
